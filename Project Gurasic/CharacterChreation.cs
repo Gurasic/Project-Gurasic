@@ -1,15 +1,21 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using SadConsole.Effects;
 using SadConsole.UI;
 using SadConsole.UI.Controls;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Project_Gurasic.Scenes
 {
+
     internal class CharacterChreation : SadConsole.UI.ControlsConsole
     {
+
         Random random = new Random();
         public string Title => "CharacterChreation";
+
+        UTF8Encoding utf8 = new UTF8Encoding();
 
         public CharacterChreation() : base(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
         {
@@ -38,7 +44,13 @@ namespace Project_Gurasic.Scenes
             txtBoxChrName.Resize(14, 1);
             Controls.Add(txtBoxChrNickName);
 
-
+            //Finish Button
+            var finishbutton = new SelectionButton(8, 1)
+            {
+                Text = "Finish",
+                Position = new Point(2, 25)
+            };
+            Controls.Add(finishbutton);
 
             // - - | Gender Selection | - -
 
@@ -75,6 +87,8 @@ namespace Project_Gurasic.Scenes
             selFemaleButton.PreviousSelection = selMaleButton;
             selFemaleButton.NextSelection = selMaleButton;
 
+
+
             // - - | Stats | - -
 
             // Prints the "Stats" Text 
@@ -94,7 +108,7 @@ namespace Project_Gurasic.Scenes
 
             // - Defense -
 
-            int playerDefense = 100;
+            int playerDefense = 10;
 
             // Prints the "Defense" Text 
             this.Print(54, 5, "Defense", colors.Gray);
@@ -105,7 +119,7 @@ namespace Project_Gurasic.Scenes
 
             // - Attack -
 
-            int playerAttack = 100;
+            int playerAttack = 15;
 
             // Prints the "Attack" Text 
             this.Print(63, 5, "Attack", colors.Cyan);
@@ -119,10 +133,10 @@ namespace Project_Gurasic.Scenes
             int playerCharisma = 20;
 
             // Prints the "Charisma" Text 
-            this.Print(71, 5, "Charisma", colors.Silver);
+            this.Print(71, 5, "Charisma", colors.Purple);
 
             // Prints the Charisma value
-            this.Print(74, 6, Convert.ToString(playerCharisma), colors.SilverDark);
+            this.Print(74, 6, Convert.ToString(playerCharisma), colors.PurpleDark);
 
             // - Luck -
 
@@ -156,6 +170,62 @@ namespace Project_Gurasic.Scenes
             colorbuttonSkills.RebuildAppearances();
             selMaleButton.SetThemeColors(colorbuttonSkills);
             Controls.Add(buttonSkills);
+
+
+
+            // - - | Skills Selection | - -
+
+
+            //The All mighty Box
+            Surface.DrawBox(new Rectangle(46, 11, 35, 16), ShapeParameters.CreateBorder(new ColoredGlyph(Color.Yellow, Color.Black, '#')));
+
+
+
+            // ----- Saving Data to a .txt file -----
+            bool updateTXTFile = true;
+            String playerGender = null;
+
+            // Checks the geneder button that is pressed and uptades playerGender String acordingly
+            selFemaleButton.Click += (s, e) => { playerGender = "Female"; };
+            selMaleButton.Click += (s, e) => { playerGender = "Male"; };
+            finishbutton.Click += (s, e) =>
+            {
+                using (StreamWriter writer = new StreamWriter("PlayerInfo.txt"))
+                {
+                    writer.WriteLine("- - - Player Info - - -");
+                    writer.WriteLine(" ");
+                    writer.WriteLine(" ");
+                    writer.WriteLine("Player Name:");
+                    writer.WriteLine(txtBoxChrName.Text);
+                    writer.WriteLine(" ");
+                    writer.WriteLine("Player Nickname:");
+                    writer.WriteLine(txtBoxChrNickName.Text);
+                    writer.WriteLine(" ");
+                    writer.WriteLine("Player Gender:");
+                    writer.WriteLine(playerGender);
+                    writer.WriteLine(" ");
+                    writer.WriteLine(" ");
+                    writer.WriteLine(" - - - Stats - - -");
+                    writer.WriteLine("Health:");
+                    writer.WriteLine(playerHealth);
+                    writer.WriteLine("Defense: ");
+                    writer.WriteLine(playerDefense);
+                    writer.WriteLine("Attack: ");
+                    writer.WriteLine(playerAttack);
+                    writer.WriteLine("Charisma: ");
+                    writer.WriteLine(playerCharisma);
+                    writer.WriteLine("Luck: ");
+                    writer.WriteLine(playerLuck);
+                    writer.WriteLine(" ");
+                    writer.WriteLine(" ");
+                    writer.WriteLine("- - - Traits - - -");
+                    writer.Close();
+
+                    string line = File.ReadLines("PlayerInfo.txt").Skip(4).Take(1).First();
+                    this.Print(2, 23, "Your name is: " + line, colors.Orange);
+                }
+            };
+
         }
     }
 }
