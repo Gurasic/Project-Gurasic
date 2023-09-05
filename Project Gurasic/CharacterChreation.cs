@@ -1,21 +1,12 @@
-﻿using Microsoft.Xna.Framework.Input;
-using SadConsole.Effects;
-using SadConsole.UI;
+﻿
 using SadConsole.UI.Controls;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Project_Gurasic.Scenes
 {
 
     internal class CharacterChreation : SadConsole.UI.ControlsConsole
     {
-
-        Random random = new Random();
         public string Title => "CharacterChreation";
-
-        UTF8Encoding utf8 = new UTF8Encoding();
 
         public CharacterChreation() : base(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
         {
@@ -32,7 +23,8 @@ namespace Project_Gurasic.Scenes
                 Position = new Point(7, 3),
             };
             txtBoxChrName.Resize(12, 1);
-
+            String txtBoxNameline = File.ReadLines("SavedInfo.txt").Skip(0).Take(1).First();
+            txtBoxChrName.Text = txtBoxNameline;
             Controls.Add(txtBoxChrName);
 
             //The TextBox and the Text for the "Name" that is displayed on the screen
@@ -42,6 +34,8 @@ namespace Project_Gurasic.Scenes
                 Position = new Point(11, 5),
             };
             txtBoxChrName.Resize(14, 1);
+            String txtBoxNickNameline = File.ReadLines("SavedInfo.txt").Skip(1).Take(1).First();
+            txtBoxChrNickName.Text = txtBoxNickNameline;
             Controls.Add(txtBoxChrNickName);
 
             //Finish Button
@@ -159,32 +153,24 @@ namespace Project_Gurasic.Scenes
             this.Print(3, 14, "Chosen Traits: ", colors.Orange);
 
             // Traits Menu Options
-            var buttonSkills = new SelectionButton(12, 1)
+            var buttonTraits = new SelectionButton(12, 1)
             {
                 Text = "Traits",
                 Position = new Point(12, 12)
             };
 
-            var colorbuttonSkills = buttonSkills.FindThemeColors().Clone();
-            colorbuttonSkills.ControlForegroundNormal.SetColor(Color.OrangeRed);
-            colorbuttonSkills.RebuildAppearances();
-            selMaleButton.SetThemeColors(colorbuttonSkills);
-            Controls.Add(buttonSkills);
-
-
-
-            // - - | Skills Selection | - -
-
-
-            //The All mighty Box
-            Surface.DrawBox(new Rectangle(46, 11, 35, 16), ShapeParameters.CreateBorder(new ColoredGlyph(Color.Yellow, Color.Black, '#')));
+            var colorbuttonTraits = buttonTraits.FindThemeColors().Clone();
+            colorbuttonTraits.ControlForegroundNormal.SetColor(Color.OrangeRed);
+            colorbuttonTraits.RebuildAppearances();
+            selMaleButton.SetThemeColors(colorbuttonTraits);
+            Controls.Add(buttonTraits);
 
 
 
             // ----- Saving Data to a .txt file -----
-            bool updateTXTFile = true;
-            String playerGender = null;
 
+            String playerGender = null;
+            
             // Checks the geneder button that is pressed and uptades playerGender String acordingly
             selFemaleButton.Click += (s, e) => { playerGender = "Female"; };
             selMaleButton.Click += (s, e) => { playerGender = "Male"; };
@@ -219,13 +205,282 @@ namespace Project_Gurasic.Scenes
                     writer.WriteLine(" ");
                     writer.WriteLine(" ");
                     writer.WriteLine("- - - Traits - - -");
-                    writer.Close();
+                }
 
-                    string line = File.ReadLines("PlayerInfo.txt").Skip(4).Take(1).First();
-                    this.Print(2, 23, "Your name is: " + line, colors.Orange);
+                using (StreamWriter writer = new StreamWriter("SavedInfo.txt"))
+                {
+                    writer.WriteLine(" ");
+                    writer.WriteLine(" ");
+                    writer.Close();
                 }
             };
 
+            buttonTraits.Click += (s, e) =>
+            {
+                using (StreamWriter writer = new StreamWriter("SavedInfo.txt"))
+                {
+                    writer.WriteLine(txtBoxChrName.Text);
+                    writer.WriteLine(txtBoxChrNickName.Text);
+                    writer.Close();
+                }
+                Game.Instance.Screen = new TraitSelection();
+                Game.Instance.DestroyDefaultStartingConsole();
+            };
+        }
+    }
+    internal class TraitSelection : SadConsole.UI.ControlsConsole
+    {
+        public string Title => "TraitSelection";
+
+        public TraitSelection() : base(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
+        {
+            bool visualizedStrongTrait = true;
+            bool visualizedBigTrait = true;
+            bool visualizedSkiledTrait = true;
+            bool visualizedSmallTrait = true;
+            bool visualizedSoftSkinTrait = true;
+            bool visualizedWeakTrait = true;
+            bool visualizedDumbTrait = true;
+            var colors = Controls.GetThemeColors();
+            int amountOfTraitsYouGet = 3;
+            int SperationBetwenTraits = 1;
+            //Prints the "Trait Selector" Text on top of the screen
+            this.Print(1, 1, "Trait Selector: ", colors.Yellow);
+
+            //Prints the amount of traits the player can choose
+
+            this.Print(40, 1, "Choose "+ amountOfTraitsYouGet +" Traits", colors.Yellow);
+
+            //Prints the chosen Traits
+            this.Print(1, 20, "You Chose: ", colors.Yellow);
+
+            //Finish Button
+            var finishbutton = new SelectionButton(8, 1)
+            {
+                Text = "Finish",
+                Position = new Point(2, 25),
+                
+            };
+            Controls.Add(finishbutton);
+
+            //Prints the "Positive Traits" Text
+            this.Print(1, 4, "Positive Traits: ", colors.Green);
+
+            //Prints the "Negative Traits" Text
+            this.Print(1, 8, "Negative Traits: ", colors.Red);
+
+
+            // Positive Trais Buttons
+            var strongTraitButton = new SelectionButton(10, 1)
+            {
+                Text = "[Strong]",
+                Position = new Point(1, 5),
+                ShowEnds = false
+        };
+            Controls.Add(strongTraitButton);
+
+            var SkilledTraitButton = new SelectionButton(11, 1)
+            {
+                Text = "[Skilled]",
+                Position = new Point(11, 5),
+                ShowEnds = false
+               
+            };
+            Controls.Add(SkilledTraitButton);
+
+            var BigTraitButton = new SelectionButton(7, 1)
+            {
+                Text = "[Big]",
+                Position = new Point(22, 5),
+                ShowEnds = false
+
+            };
+            Controls.Add(BigTraitButton);
+
+
+            //Negative Traits Buttons
+            var weakTraitButton = new SelectionButton(8, 1)
+            {
+                Text = "[Weak]",
+                Position = new Point(1, 9),
+                ShowEnds = false
+            };
+            Controls.Add(weakTraitButton);
+
+            var softSkinTraitButton = new SelectionButton(13, 1)
+            {
+                Text = "[Soft Skin]",
+                Position = new Point(9, 9),
+                ShowEnds = false
+            };
+            Controls.Add(softSkinTraitButton);
+
+            var dumbTraitButton = new SelectionButton(8, 1)
+            {
+                Text = "[Dumb]",
+                Position = new Point(22, 9),
+                ShowEnds = false
+
+            };
+            Controls.Add(dumbTraitButton);
+
+            var smallTraitButton = new SelectionButton(9, 1)
+            {
+                Text = "[Small]",
+                Position = new Point(30, 9),
+                ShowEnds = false
+            };
+            Controls.Add(smallTraitButton);
+            
+
+            // All the Logic Behing this
+            strongTraitButton.Click += (s, e) =>
+            {
+                if (amountOfTraitsYouGet != 0)
+                {
+                    if (visualizedStrongTrait)
+                    {
+                        amountOfTraitsYouGet--;
+                        this.Print(SperationBetwenTraits, 21, "[Strong]", colors.Green);
+                        visualizedStrongTrait = false;
+                        SperationBetwenTraits += 9;
+                    }
+                }
+                else
+                {
+                    SadConsole.UI.Window.Message("- - - You cant chose more Traits - - -", "Close");
+                }
+                this.Print(40, 1, "Choose " + amountOfTraitsYouGet + " Traits", colors.Yellow);
+            };
+
+            SkilledTraitButton.Click += (s, e) =>
+            {
+
+                if (amountOfTraitsYouGet != 0)
+                {
+                    if (visualizedSkiledTrait)
+                    {
+                        amountOfTraitsYouGet--;
+                        this.Print(SperationBetwenTraits, 21, "[Skilled]", colors.Green);
+                        visualizedSkiledTrait = false;
+                        SperationBetwenTraits += 10;
+                    }
+                }
+                else
+                {
+                    SadConsole.UI.Window.Message("- - - You cant chose more Traits - - -", "Close");
+                }
+                this.Print(40, 1, "Choose " + amountOfTraitsYouGet + " Traits", colors.Yellow);
+            };
+            
+            BigTraitButton.Click += (s, e) =>
+            {
+
+                if (amountOfTraitsYouGet != 0)
+                {
+                    if (visualizedBigTrait)
+                    {
+                        amountOfTraitsYouGet--;
+                        this.Print(SperationBetwenTraits, 21, "[Big]", colors.Green);
+                        visualizedBigTrait = false;
+                        SperationBetwenTraits += 6;
+                    }
+                }
+                else
+                {
+                    SadConsole.UI.Window.Message("- - - You cant chose more Traits - - -", "Close");
+                }
+                this.Print(40, 1, "Choose " + amountOfTraitsYouGet + " Traits", colors.Yellow);
+            };
+
+            weakTraitButton.Click += (s, e) =>
+            {
+
+                if (amountOfTraitsYouGet != 0)
+                {
+                    if (visualizedWeakTrait)
+                    {
+                        amountOfTraitsYouGet--;
+                        this.Print(SperationBetwenTraits, 21, "[Weak]", colors.Red);
+                        visualizedWeakTrait = false;
+                        SperationBetwenTraits += 7;
+                    }
+                }
+                else
+                {
+                    SadConsole.UI.Window.Message("- - - You cant chose more Traits - - -", "Close");
+                }
+                this.Print(40, 1, "Choose " + amountOfTraitsYouGet + " Traits", colors.Yellow);
+            };
+
+            softSkinTraitButton.Click += (s, e) =>
+            {
+
+                if (amountOfTraitsYouGet != 0)
+                {
+                    if (visualizedSoftSkinTrait)
+                    {
+                        amountOfTraitsYouGet++;
+                        this.Print(SperationBetwenTraits, 21, "[Soft Skin]", colors.Red);
+                        visualizedSoftSkinTrait = false;
+                        SperationBetwenTraits += 12;
+                    }
+                }
+                else
+                {
+                    SadConsole.UI.Window.Message("- - - You cant chose more Traits - - -", "Close");
+                }
+                this.Print(40, 1, "Choose " + amountOfTraitsYouGet + " Traits", colors.Yellow);
+            };
+
+            dumbTraitButton.Click += (s, e) =>
+            {
+
+                if (amountOfTraitsYouGet != 0)
+                {
+                    if (visualizedDumbTrait)
+                    {
+                        amountOfTraitsYouGet++;
+                        this.Print(SperationBetwenTraits, 21, "[Dumb]", colors.Red);
+                        visualizedDumbTrait = false;
+                        SperationBetwenTraits += 7;
+                    }
+                }
+                else
+                {
+                    SadConsole.UI.Window.Message("- - - You cant chose more Traits - - -", "Close");
+                }
+                this.Print(40, 1, "Choose " + amountOfTraitsYouGet + " Traits", colors.Yellow);
+            };
+
+
+            smallTraitButton.Click += (s, e) =>
+            {
+
+                if (amountOfTraitsYouGet != 0)
+                {
+                    if (visualizedSmallTrait)
+                    {
+                        amountOfTraitsYouGet++;
+                        this.Print(SperationBetwenTraits, 21, "[Small]", colors.Red);
+                        visualizedSmallTrait = false;
+                        SperationBetwenTraits += 8;
+                    }
+                }
+                else
+                {
+                    SadConsole.UI.Window.Message("- - - You cant chose more Traits - - -", "Close");
+                }
+                this.Print(40, 1, "Choose " + amountOfTraitsYouGet + " Traits", colors.Yellow);
+            };
+
+
+
+            finishbutton.Click += (s, e) =>
+            {
+                Game.Instance.Screen = new CharacterChreation();
+                Game.Instance.DestroyDefaultStartingConsole();
+            };
         }
     }
 }
