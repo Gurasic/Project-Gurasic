@@ -1,11 +1,14 @@
 ﻿using Microsoft.Xna.Framework.Input;
 using SadConsole.UI;
 using SadConsole.UI.Controls;
+using System.Security.Cryptography.X509Certificates;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Project_Gurasic.Scenes
 {
-     internal class CharacterChreation : SadConsole.UI.ControlsConsole
+    internal class CharacterChreation : SadConsole.UI.ControlsConsole
     {
+        Random random = new Random();
         public string Title => "CharacterChreation";
 
         public CharacterChreation() : base(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
@@ -72,21 +75,79 @@ namespace Project_Gurasic.Scenes
             selFemaleButton.PreviousSelection = selMaleButton;
             selFemaleButton.NextSelection = selMaleButton;
 
+            // - - | Stats | - -
+
+            // Prints the "Stats" Text 
+            this.Print(46, 3, "Stats:  (Base)", colors.Green);
 
 
-            // - - | Skill Selection | - -
+            // - Health -
+
+            int playerHealth = 100;
+
+            // Prints the "Health" Text 
+            this.Print(46, 5, "Health", colors.Red);
+
+            // Prints the health value
+            this.Print(48, 6, Convert.ToString(playerHealth), colors.RedDark);
+
+
+            // - Defense -
+
+            int playerDefense = 100;
+
+            // Prints the "Defense" Text 
+            this.Print(54, 5, "Defense", colors.Gray);
+
+            // Prints the Defense value
+            this.Print(56, 6, Convert.ToString(playerDefense), colors.GrayDark);
+
+
+            // - Attack -
+
+            int playerAttack = 100;
+
+            // Prints the "Attack" Text 
+            this.Print(63, 5, "Attack", colors.Cyan);
+
+            // Prints the Attack value
+            this.Print(64, 6, Convert.ToString(playerAttack), colors.CyanDark);
+
+
+            // - Charisma -
+
+            int playerCharisma = 20;
+
+            // Prints the "Charisma" Text 
+            this.Print(71, 5, "Charisma", colors.Silver);
+
+            // Prints the Charisma value
+            this.Print(74, 6, Convert.ToString(playerCharisma), colors.SilverDark);
+
+            // - Luck -
+
+            int playerLuck = 50;
+
+            // Prints the "Luck" Text 
+            this.Print(81, 5, "Luck", colors.Green);
+
+            // Prints the Luck value
+            this.Print(82, 6, Convert.ToString(playerLuck), colors.GreenDark);
+
+
+            // - - | Traits Selection | - -
 
 
             //The All mighty Box
             Surface.DrawBox(new Rectangle(1, 11, 35, 7), ShapeParameters.CreateBorder(new ColoredGlyph(Color.Yellow, Color.Black, '#')));
 
-            //Prints the "Cosen Skills" Text 
-            this.Print(3, 14, "Chosen Skills: ", colors.Orange);
+            //Prints the "Cosen Traits" Text 
+            this.Print(3, 14, "Chosen Traits: ", colors.Orange);
 
-            // Skill Menu Options
+            // Traits Menu Options
             var buttonSkills = new SelectionButton(12, 1)
             {
-                Text = "Skills",
+                Text = "Traits",
                 Position = new Point(12, 12)
             };
 
@@ -96,6 +157,5 @@ namespace Project_Gurasic.Scenes
             selMaleButton.SetThemeColors(colorbuttonSkills);
             Controls.Add(buttonSkills);
         }
-
     }
 }
