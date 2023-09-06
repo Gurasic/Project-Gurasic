@@ -245,6 +245,10 @@ namespace Project_Gurasic.Scenes
             int amountOfTraitsYouGet = 3;
             int SperationBetwenTraits = 1;
 
+            // Saving all Trait data in a Json File
+            string fileName = "PlayerTraitsData.json";
+            var options = new JsonSerializerOptions { WriteIndented = true };
+
             // Prints the "Trait Selector" Text on top of the screen
             this.Print(1, 1, "Trait Selector: ", colors.Yellow);
 
@@ -315,7 +319,7 @@ namespace Project_Gurasic.Scenes
                 ShowEnds = false
             };
             Controls.Add(softSkinTraitButton);
-
+  
             var dumbTraitButton = new SelectionButton(8, 1)
             {
                 Text = "[Dumb]",
@@ -333,6 +337,8 @@ namespace Project_Gurasic.Scenes
             };
             Controls.Add(smallTraitButton);
 
+            // The array that will Store the data
+            string[] ChosenTraits = new string[7];
 
             // All the Logic Behind the Traits (just displaying them)
             bool strongTraitBool = true;
@@ -342,6 +348,7 @@ namespace Project_Gurasic.Scenes
                 {
                     TraitDisplay(9, 21, colors.Green, "[Strong]", 0);
                     strongTraitBool = false;
+                    ChosenTraits[0] = "[Strong]";
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -353,6 +360,7 @@ namespace Project_Gurasic.Scenes
                 {    
                     TraitDisplay(10, 21, colors.Green, "[Skilled]", 0);
                     skillledTraitBool = false;
+                    ChosenTraits[1] = "[Skilled]";
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -364,6 +372,7 @@ namespace Project_Gurasic.Scenes
                 { 
                     TraitDisplay(6, 21, colors.Green, "[Big]", 0);
                     bigTraitBool = false;
+                    ChosenTraits[2] = "[Big]";
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -375,6 +384,7 @@ namespace Project_Gurasic.Scenes
                 { 
                     TraitDisplay(7, 21, colors.Red, "[Weak]", 1);
                     weakTraitBool = false;
+                    ChosenTraits[2] = "[Weak]";
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -386,6 +396,7 @@ namespace Project_Gurasic.Scenes
                 { 
                     TraitDisplay(12, 21, colors.Red, "[Soft Skin]", 1);
                     softSkinTraitBool = false;
+                    ChosenTraits[2] = "[Soft Skin]";
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -397,6 +408,7 @@ namespace Project_Gurasic.Scenes
                 { 
                     TraitDisplay(7, 21, colors.Red, "[Dumb]", 1);
                     dumbTraitBool = false;
+                    ChosenTraits[2] = "[Dumb]";
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -408,6 +420,7 @@ namespace Project_Gurasic.Scenes
                 { 
                     TraitDisplay(8, 21, colors.Red, "[Small]", 1);
                     smallTraitBool = false;
+                    ChosenTraits[2] = "[Small]";
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -428,7 +441,9 @@ namespace Project_Gurasic.Scenes
                    if (amountoftraits == 1) { amountOfTraitsYouGet++; }
                    else { amountOfTraitsYouGet--; }
                    this.Print(SperationBetwenTraits, YLvL, Trait, Get);
-                   SperationBetwenTraits += Space;  
+                   SperationBetwenTraits += Space;
+                   string jsonString = JsonSerializer.Serialize(ChosenTraits, options);
+                   File.WriteAllText(fileName, jsonString);
                 }
                 else
                 {
