@@ -1,6 +1,9 @@
-﻿
+﻿using Microsoft.Xna.Framework.Input;
+using SadConsole.Input;
+using SadConsole.UI;
 using SadConsole.UI.Controls;
-using System.Security.Cryptography.X509Certificates;
+using System.ComponentModel.Design;
+using System.Diagnostics;
 using System.Text.Json;
 namespace Project_Gurasic.Scenes
 {
@@ -8,7 +11,7 @@ namespace Project_Gurasic.Scenes
     internal class CharacterChreation : SadConsole.UI.ControlsConsole
     {
         public string Title => "CharacterChreation";
-
+        
         public CharacterChreation() : base(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
         {
             var colors = Controls.GetThemeColors();
@@ -146,9 +149,28 @@ namespace Project_Gurasic.Scenes
 
             // - - | Traits Selection | - -
 
+            // Getting Trait Data
+            ReadingTraitData();
+
+            void ReadingTraitData()
+            {
+                int startingSpacePositive = 3;
+                int startingSpaceNegative = 3;
+                this.Print(startingSpacePositive, 15, "[---]", colors.Gray);
+                for (int i = 0; i < TraitSelection.ChosenTraitsPositive.Length; i++)
+                {
+                    this.Print(startingSpacePositive, 15, TraitSelection.ChosenTraitsPositive[i], colors.Green);
+                    startingSpacePositive += TraitSelection.SpaceBettwenTraitsPositive[i];
+                }
+                for (int i = 0; i < TraitSelection.ChosenTraitsNegative.Length; i++)
+                {
+                    this.Print(startingSpaceNegative, 16, TraitSelection.ChosenTraitsNegative[i], colors.Red);
+                    startingSpaceNegative += TraitSelection.SpaceBettwenTraitsNegative[i];
+                }
+            }
 
             //The All mighty Box
-            Surface.DrawBox(new Rectangle(1, 11, 35, 7), ShapeParameters.CreateBorder(new ColoredGlyph(Color.Yellow, Color.Black, '#')));
+            Surface.DrawBox(new Rectangle(1, 11, 39, 7), ShapeParameters.CreateBorder(new ColoredGlyph(Color.Yellow, Color.Black, '#')));
 
             //Prints the "Cosen Traits" Text 
             this.Print(3, 14, "Chosen Traits: ", colors.Orange);
@@ -157,7 +179,7 @@ namespace Project_Gurasic.Scenes
             var buttonTraits = new SelectionButton(12, 1)
             {
                 Text = "Traits",
-                Position = new Point(12, 12)
+                Position = new Point(14, 12)
             };
 
             var colorbuttonTraits = buttonTraits.FindThemeColors().Clone();
@@ -171,7 +193,7 @@ namespace Project_Gurasic.Scenes
             // ----- Saving Data to a .txt file -----
 
             String playerGender = null;
-            
+
             // Checks the geneder button that is pressed and uptades playerGender String acordingly
             selFemaleButton.Click += (s, e) => { playerGender = "Female"; };
             selMaleButton.Click += (s, e) => { playerGender = "Male"; };
@@ -206,6 +228,19 @@ namespace Project_Gurasic.Scenes
                     writer.WriteLine(" ");
                     writer.WriteLine(" ");
                     writer.WriteLine("- - - Traits - - -");
+                    writer.WriteLine("Positive Traits:");
+                    writer.WriteLine(" ");
+                    for (int i = 0; i < TraitSelection.ChosenTraitsPositive.Length; i++)
+                    {
+                        writer.WriteLine(TraitSelection.ChosenTraitsPositive[i]);
+                    }
+                    writer.WriteLine(" ");
+                    writer.WriteLine("Negative Traits:");
+                    writer.WriteLine(" ");
+                    for (int i = 0; i < TraitSelection.ChosenTraitsNegative.Length; i++)
+                    {
+                        writer.WriteLine(TraitSelection.ChosenTraitsNegative[i]);
+                    }
                 }
 
                 string fileName = "PlayerData.json";
@@ -223,6 +258,7 @@ namespace Project_Gurasic.Scenes
 
             buttonTraits.Click += (s, e) =>
             {
+
                 using (StreamWriter writer = new StreamWriter("SavedInfo.txt"))
                 {
                     writer.WriteLine(txtBoxChrName.Text);
@@ -232,22 +268,28 @@ namespace Project_Gurasic.Scenes
                 Game.Instance.Screen = new TraitSelection();
                 Game.Instance.DestroyDefaultStartingConsole();
             };
+  
         }
     }
     internal class TraitSelection : SadConsole.UI.ControlsConsole
     {
         public string Title => "TraitSelection";
 
+        private readonly ScreenSurface _mouseCursor;
+
+        // The array that will Store the data
+        public static string[] ChosenTraitsPositive = new string[3];
+        public static string[] ChosenTraitsNegative = new string[4];
+        public static int[] SpaceBettwenTraitsPositive = new int[3];
+        public static int[] SpaceBettwenTraitsNegative = new int[4];
         public TraitSelection() : base(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
         {
+            UseKeyboard = false;
+            UseMouse = true;
 
             var colors = Controls.GetThemeColors();
             int amountOfTraitsYouGet = 3;
             int SperationBetwenTraits = 1;
-
-            // Saving all Trait data in a Json File
-            string fileName = "PlayerTraitsData.json";
-            var options = new JsonSerializerOptions { WriteIndented = true };
 
             // Prints the "Trait Selector" Text on top of the screen
             this.Print(1, 1, "Trait Selector: ", colors.Yellow);
@@ -258,6 +300,9 @@ namespace Project_Gurasic.Scenes
 
             // Prints the chosen Traits
             this.Print(1, 20, "You Chose: ", colors.Yellow);
+
+            // Another All Might Box Were the traits are explained
+            Surface.DrawBox(new Rectangle(52, 3, 37, 13), ShapeParameters.CreateBorder(new ColoredGlyph(Color.Yellow, Color.Black, '#')));
 
             // Finish Button
             var finishbutton = new SelectionButton(8, 1)
@@ -273,6 +318,12 @@ namespace Project_Gurasic.Scenes
 
             // Prints the "Negative Traits" Text
             this.Print(1, 8, "Negative Traits: ", colors.Red);
+
+            _mouseCursor = new SadConsole.ScreenSurface(1, 1);
+            _mouseCursor.Surface.SetGlyph(0, 0, 178);
+            _mouseCursor.UseMouse = false;
+
+            Children.Add(_mouseCursor);
 
 
             // Positive Trais Buttons
@@ -337,8 +388,8 @@ namespace Project_Gurasic.Scenes
             };
             Controls.Add(smallTraitButton);
 
-            // The array that will Store the data
-            string[] ChosenTraits = new string[7];
+
+ 
 
             // All the Logic Behind the Traits (just displaying them)
             bool strongTraitBool = true;
@@ -348,7 +399,8 @@ namespace Project_Gurasic.Scenes
                 {
                     TraitDisplay(9, 21, colors.Green, "[Strong]", 0);
                     strongTraitBool = false;
-                    ChosenTraits[0] = "[Strong]";
+                    ChosenTraitsPositive[0] = "[Strong]";
+                    SpaceBettwenTraitsPositive[0] = 9;
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -360,7 +412,8 @@ namespace Project_Gurasic.Scenes
                 {    
                     TraitDisplay(10, 21, colors.Green, "[Skilled]", 0);
                     skillledTraitBool = false;
-                    ChosenTraits[1] = "[Skilled]";
+                    ChosenTraitsPositive[1] = "[Skilled]";
+                    SpaceBettwenTraitsPositive[1] = 10;
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -368,11 +421,12 @@ namespace Project_Gurasic.Scenes
             bool bigTraitBool = true;
             BigTraitButton.Click += (s, e) =>
             {
-                if (bigTraitBool) 
-                { 
+                if (bigTraitBool)
+                {
                     TraitDisplay(6, 21, colors.Green, "[Big]", 0);
                     bigTraitBool = false;
-                    ChosenTraits[2] = "[Big]";
+                    ChosenTraitsPositive[2] = "[Big]";
+                    SpaceBettwenTraitsPositive[2] = 6;
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -384,7 +438,8 @@ namespace Project_Gurasic.Scenes
                 { 
                     TraitDisplay(7, 21, colors.Red, "[Weak]", 1);
                     weakTraitBool = false;
-                    ChosenTraits[2] = "[Weak]";
+                    ChosenTraitsNegative[0] = "[Weak]";
+                    SpaceBettwenTraitsNegative[0] = 7;
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -396,7 +451,8 @@ namespace Project_Gurasic.Scenes
                 { 
                     TraitDisplay(12, 21, colors.Red, "[Soft Skin]", 1);
                     softSkinTraitBool = false;
-                    ChosenTraits[2] = "[Soft Skin]";
+                    ChosenTraitsNegative[1] = "[Soft Skin]";
+                    SpaceBettwenTraitsNegative[1] = 12;
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -408,7 +464,8 @@ namespace Project_Gurasic.Scenes
                 { 
                     TraitDisplay(7, 21, colors.Red, "[Dumb]", 1);
                     dumbTraitBool = false;
-                    ChosenTraits[2] = "[Dumb]";
+                    ChosenTraitsNegative[2] = "[Dumb]";
+                    SpaceBettwenTraitsNegative[2] = 7;
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -420,7 +477,8 @@ namespace Project_Gurasic.Scenes
                 { 
                     TraitDisplay(8, 21, colors.Red, "[Small]", 1);
                     smallTraitBool = false;
-                    ChosenTraits[2] = "[Small]";
+                    ChosenTraitsNegative[3] = "[Small]";
+                    SpaceBettwenTraitsNegative[3] = 8;
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -442,8 +500,6 @@ namespace Project_Gurasic.Scenes
                    else { amountOfTraitsYouGet--; }
                    this.Print(SperationBetwenTraits, YLvL, Trait, Get);
                    SperationBetwenTraits += Space;
-                   string jsonString = JsonSerializer.Serialize(ChosenTraits, options);
-                   File.WriteAllText(fileName, jsonString);
                 }
                 else
                 {
@@ -452,5 +508,24 @@ namespace Project_Gurasic.Scenes
 
             }
         }
+        public override bool ProcessMouse(MouseScreenObjectState state)
+        {
+            _mouseCursor.IsVisible = state.IsOnScreenObject;
+            _mouseCursor.Position = state.CellPosition;
+            var colors = Controls.GetThemeColors();
+
+            // Strong Trait Info
+            for (int i = 2; i < 10; i++) 
+            { 
+                if (_mouseCursor.Position == state.CellPosition.WithX(i).WithY(5))
+                {
+                    this.Print(66, 4, "[Strong]", colors.Green);
+                    this.Print(54, 6, "This Trait Increses the Attack", colors.Gray);
+                    this.Print(54, 7, "Stat by 10 And Defense by 5", colors.Gray);
+                }
+            }
+            return base.ProcessMouse(state);
+        }
+
     }
 }
