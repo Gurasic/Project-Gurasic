@@ -304,6 +304,16 @@ namespace Project_Gurasic.Scenes
             // Another All Might Box Were the traits are explained
             Surface.DrawBox(new Rectangle(52, 3, 37, 13), ShapeParameters.CreateBorder(new ColoredGlyph(Color.Yellow, Color.Black, '#')));
 
+            // The Base Box that were the traits will be explained
+            void BaseTraitsBox()
+            {
+                this.Print(68, 4, "[---]", colors.Gray);
+                this.Print(54, 6, "- - - - - - - - - - - - - - - - -", colors.Gray);
+                this.Print(54, 7, "- - - - - - - - - - - - - - - - -", colors.Gray);
+                this.Print(54, 8, "- - - - - - - - - - - - - - - - -", colors.Gray);
+                this.Print(54, 9, "- - - - - - - - - - - - - - - - -", colors.Gray);
+            }
+           
             // Finish Button
             var finishbutton = new SelectionButton(8, 1)
             {
@@ -320,7 +330,6 @@ namespace Project_Gurasic.Scenes
             this.Print(1, 8, "Negative Traits: ", colors.Red);
 
             _mouseCursor = new SadConsole.ScreenSurface(1, 1);
-            _mouseCursor.Surface.SetGlyph(0, 0, 178);
             _mouseCursor.UseMouse = false;
 
             Children.Add(_mouseCursor);
@@ -513,19 +522,56 @@ namespace Project_Gurasic.Scenes
             _mouseCursor.IsVisible = state.IsOnScreenObject;
             _mouseCursor.Position = state.CellPosition;
             var colors = Controls.GetThemeColors();
-
-            // Strong Trait Info
-            for (int i = 2; i < 10; i++) 
-            { 
-                if (_mouseCursor.Position == state.CellPosition.WithX(i).WithY(5))
-                {
-                    this.Print(66, 4, "[Strong]", colors.Green);
-                    this.Print(54, 6, "This Trait Increses the Attack", colors.Gray);
-                    this.Print(54, 7, "Stat by 10 And Defense by 5", colors.Gray);
-                }
+            String Empty = "- - - - - - - - - - - - - - - - -";
+            void BaseTraitsBox()
+            {
+                this.Print(58, 4, "[------------------------]", colors.Gray);
+                this.Print(54, 6, "- - - - - - - - - - - - - - - - - ", colors.Gray);
+                this.Print(54, 7, "- - - - - - - - - - - - - - - - - ", colors.Gray);
+                this.Print(54, 8, "- - - - - - - - - - - - - - - - - ", colors.Gray);
+                this.Print(54, 9, "- - - - - - - - - - - - - - - - - ", colors.Gray);
             }
+            BaseTraitsBox();
+            //1, 10, 66
+            //this.Print(54, 6, "This Trait Increses the Attack", colors.Gray);
+            //this.Print(54, 7, "Stat by 10 And Defense by 5", colors.Gray);
+            void TraitInfo(int X, int X2, int Y, int nameLocation, Color color, String Name, String Line1, String Line2, String Line3, String Line4) { 
+
+              for (int i = X; i < X2; i++)
+              {
+
+                 if (_mouseCursor.Position == (i, Y))
+                 {
+                    this.Print(nameLocation, 4, Name, color);
+                    this.Print(54, 6, Line1, colors.Gray);
+                    this.Print(54, 7, Line2, colors.Gray);
+                    this.Print(54, 8, Line3, colors.Gray);
+                    this.Print(54, 9, Line4, colors.Gray);
+                 }
+              }
+            }
+            // [Strong] Trait Info
+            TraitInfo(2, 10, 5, 67, colors.Green, "[Strong]", "This Trait Increses the Attack   ", "Stat by 10, You are just Stronger ", Empty, Empty);
+
+            // [Skilled] Trait Info
+            TraitInfo(12, 21, 5, 66, colors.Green, "[Skilled]", "This Trait Increses the amount Of ", "XP you get per skill by 10%      ", Empty, Empty);
+
+            // [Big] Trait Info
+            TraitInfo(23, 28, 5, 68, colors.Green, "[Big]", "This Trait Increses the Defense  ", "Stat by 10, You are just Bigger   ", Empty, Empty);
+
+
+            // [Weak] Trait Info
+            TraitInfo(2, 8, 9, 68, colors.Red, "[Weak]", "This Trait Decresses the Attack  ", "Stat by 10, You are just Weaker   ", Empty, Empty);
+
+            // [Soft Skin] Trait Info
+            TraitInfo(10, 21, 9, 65, colors.Red, "[Soft Skin]", "This Trait Decresses the Defense  ", "Stat by 10, Removing Natural Armor", Empty, Empty);
+
+            // [Dumb] Trait Info
+            TraitInfo(23, 29, 9, 68, colors.Red, "[Dumb]", "This Trait Decresses the amount Of", "XP you get per skill by 10%      ", Empty, Empty);
+
+            // [Small] Trait Info
+            TraitInfo(31, 38, 9, 67, colors.Red, "[Small]", "This Trait Decresses the Health  ", "Stat by 10, Smaller but Cute   ", Empty, Empty);
             return base.ProcessMouse(state);
         }
-
     }
 }
