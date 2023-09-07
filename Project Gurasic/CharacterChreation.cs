@@ -1,7 +1,9 @@
 ﻿using Microsoft.Xna.Framework.Input;
+using SadConsole;
 using SadConsole.Input;
 using SadConsole.UI;
 using SadConsole.UI.Controls;
+using System;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using System.Text.Json;
@@ -188,8 +190,6 @@ namespace Project_Gurasic.Scenes
             selMaleButton.SetThemeColors(colorbuttonTraits);
             Controls.Add(buttonTraits);
 
-
-
             // ----- Saving Data to a .txt file -----
 
             String playerGender = null;
@@ -291,6 +291,9 @@ namespace Project_Gurasic.Scenes
             int amountOfTraitsYouGet = 3;
             int SperationBetwenTraits = 1;
 
+            var coloredGlyph = Surface[0, 0];
+
+
             // Prints the "Trait Selector" Text on top of the screen
             this.Print(1, 1, "Trait Selector: ", colors.Yellow);
 
@@ -303,7 +306,6 @@ namespace Project_Gurasic.Scenes
 
             // Another All Might Box Were the traits are explained
             Surface.DrawBox(new Rectangle(52, 3, 37, 13), ShapeParameters.CreateBorder(new ColoredGlyph(Color.Yellow, Color.Black, '#')));
-
             // The Base Box that were the traits will be explained
             void BaseTraitsBox()
             {
@@ -340,7 +342,8 @@ namespace Project_Gurasic.Scenes
             {
                 Text = "[Strong]",
                 Position = new Point(1, 5),
-                ShowEnds = false
+                ShowEnds = false,
+
             };
             Controls.Add(strongTraitButton);
 
@@ -379,7 +382,7 @@ namespace Project_Gurasic.Scenes
                 ShowEnds = false
             };
             Controls.Add(softSkinTraitButton);
-  
+
             var dumbTraitButton = new SelectionButton(8, 1)
             {
                 Text = "[Dumb]",
@@ -395,6 +398,7 @@ namespace Project_Gurasic.Scenes
                 Position = new Point(30, 9),
                 ShowEnds = false
             };
+
             Controls.Add(smallTraitButton);
 
 
@@ -475,6 +479,7 @@ namespace Project_Gurasic.Scenes
                     dumbTraitBool = false;
                     ChosenTraitsNegative[2] = "[Dumb]";
                     SpaceBettwenTraitsNegative[2] = 7;
+
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
             };
@@ -532,9 +537,7 @@ namespace Project_Gurasic.Scenes
                 this.Print(54, 9, "- - - - - - - - - - - - - - - - - ", colors.Gray);
             }
             BaseTraitsBox();
-            //1, 10, 66
-            //this.Print(54, 6, "This Trait Increses the Attack", colors.Gray);
-            //this.Print(54, 7, "Stat by 10 And Defense by 5", colors.Gray);
+
             void TraitInfo(int X, int X2, int Y, int nameLocation, Color color, String Name, String Line1, String Line2, String Line3, String Line4) { 
 
               for (int i = X; i < X2; i++)
@@ -561,16 +564,16 @@ namespace Project_Gurasic.Scenes
 
 
             // [Weak] Trait Info
-            TraitInfo(2, 8, 9, 68, colors.Red, "[Weak]", "This Trait Decresses the Attack  ", "Stat by 10, You are just Weaker   ", Empty, Empty);
+            TraitInfo(2, 8, 9, 68, colors.Red, "[Weak]", "This Trait Decresses the Attack  ", "Stat by 15, You are just Weaker   ", Empty, Empty);
 
             // [Soft Skin] Trait Info
-            TraitInfo(10, 21, 9, 65, colors.Red, "[Soft Skin]", "This Trait Decresses the Defense  ", "Stat by 10, Removing Natural Armor", Empty, Empty);
+            TraitInfo(10, 21, 9, 65, colors.Red, "[Soft Skin]", "This Trait Decresses the Defense  ", "Stat by 15, Removing Natural Armor", Empty, Empty);
 
             // [Dumb] Trait Info
             TraitInfo(23, 29, 9, 68, colors.Red, "[Dumb]", "This Trait Decresses the amount Of", "XP you get per skill by 10%      ", Empty, Empty);
 
             // [Small] Trait Info
-            TraitInfo(31, 38, 9, 67, colors.Red, "[Small]", "This Trait Decresses the Health  ", "Stat by 10, Smaller but Cute   ", Empty, Empty);
+            TraitInfo(31, 38, 9, 67, colors.Red, "[Small]", "This Trait Decresses the Health  ", "Stat by 20, Smaller but Cute   ", Empty, Empty);
             return base.ProcessMouse(state);
         }
     }
