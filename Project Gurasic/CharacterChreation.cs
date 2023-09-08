@@ -7,7 +7,8 @@ namespace Project_Gurasic.Scenes
     internal class CharacterChreation : SadConsole.UI.ControlsConsole
     {
         public string Title => "CharacterChreation";
-        
+        public String PlayerNameData;
+        public String PlayerNicknameData;
         public CharacterChreation() : base(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
         {
             var colors = Controls.GetThemeColors();
@@ -23,8 +24,7 @@ namespace Project_Gurasic.Scenes
                 Position = new Point(7, 3),
             };
             txtBoxChrName.Resize(12, 1);
-            //String txtBoxNameline = File.ReadLines("SavedInfo.txt").Skip(0).Take(1).First();
-            //txtBoxChrName.Text = txtBoxNameline;
+            txtBoxChrName.Text = PlayerNameData;
             Controls.Add(txtBoxChrName);
 
             //The TextBox and the Text for the "Name" that is displayed on the screen
@@ -34,8 +34,7 @@ namespace Project_Gurasic.Scenes
                 Position = new Point(11, 5),
             };
             txtBoxChrName.Resize(14, 1);
-            //String txtBoxNickNameline = File.ReadLines("SavedInfo.txt").Skip(1).Take(1).First();
-            //txtBoxChrNickName.Text = txtBoxNickNameline;
+            txtBoxChrNickName.Text = PlayerNicknameData;
             Controls.Add(txtBoxChrNickName);
 
             //Finish Button
@@ -194,6 +193,7 @@ namespace Project_Gurasic.Scenes
             selMaleButton.Click += (s, e) => { playerGender = "Male"; };
             finishbutton.Click += (s, e) =>
             {
+
                 using (StreamWriter writer = new StreamWriter("PlayerInfo.txt"))
                 {
                     writer.WriteLine("- - - Player Info - - -");
@@ -240,6 +240,8 @@ namespace Project_Gurasic.Scenes
                     writer.Dispose();
                 }
 
+                PlayerNameData = " ";
+                PlayerNicknameData = " ";
                 using (StreamWriter writer = new StreamWriter("SavedInfo.txt"))
                 {
                     writer.WriteLine(" ");
@@ -256,13 +258,8 @@ namespace Project_Gurasic.Scenes
             {
                 Game.Instance.Screen = new TraitSelection();
                 Game.Instance.DestroyDefaultStartingConsole();
-                using (StreamWriter writer = new StreamWriter("SavedInfo.txt"))
-                {
-                    writer.WriteLine(txtBoxChrName.Text);
-                    writer.WriteLine(txtBoxChrNickName.Text);
-                    writer.Close();
-                    writer.Dispose();
-                }
+                PlayerNameData = txtBoxChrName.Text;
+                PlayerNicknameData = txtBoxChrNickName.Text;
             };
   
         }
