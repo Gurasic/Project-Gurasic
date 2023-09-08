@@ -8,6 +8,7 @@ namespace Project_Gurasic.Scenes
 
         public RootScene() : base(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
         {
+            
             var selButton = new SelectionButton(16, 1)
             {
                 Text = "Start",
@@ -16,6 +17,7 @@ namespace Project_Gurasic.Scenes
             Controls.Add(selButton);
             OnMainMenuText();
             selButton.Click += (s, e) => {
+                File.Create("SavedInfo.txt");
                 Game.Instance.Screen = new CharacterChreation();
                 Game.Instance.DestroyDefaultStartingConsole();
             };
@@ -36,6 +38,7 @@ namespace Project_Gurasic.Scenes
             this.Print(12, 13, "   \\ \\_______\\ \\__\\ \\__\\ \\__\\    \\ \\__\\ \\__\\ \\__\\\\ \\__\\ \\_______\\", colors.Yellow);
             this.Print(12, 14, "    \\|_______|\\|__|\\|__|\\|__|     \\|__|\\|__|\\|__| \\|__|\\|_______|", colors.Yellow);
             this.Print(36, 29, "Made by: Gurasic", colors.White);
+            
         }
 
     }

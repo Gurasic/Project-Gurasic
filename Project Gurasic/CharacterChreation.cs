@@ -1,11 +1,5 @@
-﻿using Microsoft.Xna.Framework.Input;
-using SadConsole;
-using SadConsole.Input;
-using SadConsole.UI;
+﻿using SadConsole.Input;
 using SadConsole.UI.Controls;
-using System;
-using System.ComponentModel.Design;
-using System.Diagnostics;
 using System.Text.Json;
 namespace Project_Gurasic.Scenes
 {
@@ -17,7 +11,7 @@ namespace Project_Gurasic.Scenes
         public CharacterChreation() : base(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
         {
             var colors = Controls.GetThemeColors();
-
+            
 
             //Prints the "Character Creation" Text on top of the screen
             this.Print(1, 1, "Character Creation: ", colors.Yellow);
@@ -29,8 +23,8 @@ namespace Project_Gurasic.Scenes
                 Position = new Point(7, 3),
             };
             txtBoxChrName.Resize(12, 1);
-            String txtBoxNameline = File.ReadLines("SavedInfo.txt").Skip(0).Take(1).First();
-            txtBoxChrName.Text = txtBoxNameline;
+            //String txtBoxNameline = File.ReadLines("SavedInfo.txt").Skip(0).Take(1).First();
+            //txtBoxChrName.Text = txtBoxNameline;
             Controls.Add(txtBoxChrName);
 
             //The TextBox and the Text for the "Name" that is displayed on the screen
@@ -40,8 +34,8 @@ namespace Project_Gurasic.Scenes
                 Position = new Point(11, 5),
             };
             txtBoxChrName.Resize(14, 1);
-            String txtBoxNickNameline = File.ReadLines("SavedInfo.txt").Skip(1).Take(1).First();
-            txtBoxChrNickName.Text = txtBoxNickNameline;
+            //String txtBoxNickNameline = File.ReadLines("SavedInfo.txt").Skip(1).Take(1).First();
+            //txtBoxChrNickName.Text = txtBoxNickNameline;
             Controls.Add(txtBoxChrNickName);
 
             //Finish Button
@@ -153,8 +147,9 @@ namespace Project_Gurasic.Scenes
 
             // Getting Trait Data
             ReadingTraitData();
-
+            
             void ReadingTraitData()
+
             {
                 int startingSpacePositive = 3;
                 int startingSpaceNegative = 3;
@@ -241,32 +236,33 @@ namespace Project_Gurasic.Scenes
                     {
                         writer.WriteLine(TraitSelection.ChosenTraitsNegative[i]);
                     }
+                    writer.Close();
+                    writer.Dispose();
                 }
-
-                string fileName = "PlayerData.json";
-                var options = new JsonSerializerOptions { WriteIndented = true };
-                string jsonString = JsonSerializer.Serialize(txtBoxChrName.Text, options);
-                File.WriteAllText(fileName, txtBoxChrName.Text);
 
                 using (StreamWriter writer = new StreamWriter("SavedInfo.txt"))
                 {
                     writer.WriteLine(" ");
                     writer.WriteLine(" ");
                     writer.Close();
+                    writer.Dispose();
                 }
+
+                Game.Instance.Screen = new PlayerHouse();
+                Game.Instance.DestroyDefaultStartingConsole();
             };
 
             buttonTraits.Click += (s, e) =>
             {
-
+                Game.Instance.Screen = new TraitSelection();
+                Game.Instance.DestroyDefaultStartingConsole();
                 using (StreamWriter writer = new StreamWriter("SavedInfo.txt"))
                 {
                     writer.WriteLine(txtBoxChrName.Text);
                     writer.WriteLine(txtBoxChrNickName.Text);
                     writer.Close();
+                    writer.Dispose();
                 }
-                Game.Instance.Screen = new TraitSelection();
-                Game.Instance.DestroyDefaultStartingConsole();
             };
   
         }
@@ -288,7 +284,7 @@ namespace Project_Gurasic.Scenes
             UseMouse = true;
 
             var colors = Controls.GetThemeColors();
-            int amountOfTraitsYouGet = 3;
+            int amountOfTraitsYouGet = 2;
             int SperationBetwenTraits = 1;
 
             var coloredGlyph = Surface[0, 0];
@@ -317,10 +313,10 @@ namespace Project_Gurasic.Scenes
             }
            
             // Finish Button
-            var finishbutton = new SelectionButton(8, 1)
+            var finishbutton = new SelectionButton(9, 1)
             {
-                Text = "Finish",
-                Position = new Point(2, 25),
+                Text = "Go Back",
+                Position = new Point(3, 26),
 
             };
             Controls.Add(finishbutton);
@@ -398,11 +394,17 @@ namespace Project_Gurasic.Scenes
                 Position = new Point(30, 9),
                 ShowEnds = false
             };
-
             Controls.Add(smallTraitButton);
 
+            // Reset all traits Button
+            var resetTraitsButton = new SelectionButton(9, 1)
+            {
+                Text = "<-Reset->",
+                Position = new Point(67, 19),
+                ShowEnds = false
+            };
+            Controls.Add(resetTraitsButton);
 
- 
 
             // All the Logic Behind the Traits (just displaying them)
             bool strongTraitBool = true;
@@ -487,14 +489,34 @@ namespace Project_Gurasic.Scenes
             bool smallTraitBool = true;
             smallTraitButton.Click += (s, e) =>
             {
-                if (smallTraitBool) 
-                { 
+                if (smallTraitBool)
+                {
                     TraitDisplay(8, 21, colors.Red, "[Small]", 1);
                     smallTraitBool = false;
                     ChosenTraitsNegative[3] = "[Small]";
                     SpaceBettwenTraitsNegative[3] = 8;
                 }
                 this.Print(40, 1, $"Choose {amountOfTraitsYouGet} Traits", colors.Yellow);
+            };
+
+            // Rest Button Logic
+            resetTraitsButton.Click += (s, e) =>
+            {
+                this.Print(1, 21, "                                                                                           ", colors.Yellow);
+                dumbTraitBool = true;
+                dumbTraitBool = true;
+                softSkinTraitBool = true;
+                weakTraitBool = true;
+                bigTraitBool = true;
+                skillledTraitBool = true;
+                strongTraitBool = true;
+                SperationBetwenTraits = 1;
+
+                Array.Clear(ChosenTraitsNegative, 0, ChosenTraitsNegative.Length);
+                Array.Clear(ChosenTraitsPositive, 0, ChosenTraitsPositive.Length);
+                Array.Clear(SpaceBettwenTraitsNegative, 0, SpaceBettwenTraitsNegative.Length);
+                Array.Clear(SpaceBettwenTraitsPositive, 0, SpaceBettwenTraitsPositive.Length);
+
             };
 
             // Finish Button Logic, It just takes you back to the CharacterChreation Screen
