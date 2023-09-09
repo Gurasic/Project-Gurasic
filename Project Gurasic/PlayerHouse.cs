@@ -13,7 +13,7 @@ namespace Project_Gurasic
         public PlayerHouse()
         {
             GameSettings.LastScreen = this;
-            this.Print(1, 10, "on god ", Color.Red);
+            
 
 
         }

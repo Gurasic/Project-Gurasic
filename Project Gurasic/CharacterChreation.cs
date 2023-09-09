@@ -11,6 +11,7 @@ namespace Project_Gurasic.Scenes
         public String PlayerNicknameData;
         public static bool PlayerNameDatabool = false;
         public static bool PlayerNicknameDatabool = false;
+        public static String playerGender = null;
         public CharacterChreation() : base(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
         {
             var colors = Controls.GetThemeColors();
@@ -188,11 +189,29 @@ namespace Project_Gurasic.Scenes
             selMaleButton.SetThemeColors(colorbuttonTraits);
             Controls.Add(buttonTraits);
 
+            this.Print(1, 9, "Chosen Gender: ", colors.Orange);
+
             // ----- Saving Data to a .txt file -----
 
-            String playerGender = null;
+            // Checks the geneder button that is pressed and uptades playerGender String acordingly
+
+            selFemaleButton.Click += (s, e) => 
+            { 
+                playerGender = "[Female]"; 
+                this.Print(16, 9, "         ", Color.Gray); 
+                this.Print(16, 9, "[Female] ", Color.LightPink);
+            };
+            selMaleButton.Click += (s, e) =>
+            {
+                playerGender = "[Male]";
+                this.Print(16, 9, "        ", Color.Gray);
+                this.Print(16, 9, "[Male]", Color.LightBlue);
+            };
+            if (playerGender == "[Female]") { this.Print(16, 9, "[Female] ", Color.LightPink); }
+            if (playerGender == "[Male]") { this.Print(16, 9, "[Male]", Color.LightBlue); }
             void SavingPlayerInfo() 
             {
+                // Uptaded PlayerInfo.txt
                 using (StreamWriter writer = new StreamWriter("PlayerInfo.txt"))
                 {
                     writer.WriteLine("- - - Player Info - - -");
@@ -239,9 +258,7 @@ namespace Project_Gurasic.Scenes
                     writer.Dispose();
                 }
             }
-            // Checks the geneder button that is pressed and uptades playerGender String acordingly
-            selFemaleButton.Click += (s, e) => { playerGender = "Female"; };
-            selMaleButton.Click += (s, e) => { playerGender = "Male"; };
+
             finishbutton.Click += (s, e) =>
             {
                 SavingPlayerInfo();
