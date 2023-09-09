@@ -9,6 +9,8 @@ namespace Project_Gurasic.Scenes
         public string Title => "CharacterChreation";
         public String PlayerNameData;
         public String PlayerNicknameData;
+        public static bool PlayerNameDatabool = false;
+        public static bool PlayerNicknameDatabool = false;
         public CharacterChreation() : base(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
         {
             var colors = Controls.GetThemeColors();
@@ -24,7 +26,6 @@ namespace Project_Gurasic.Scenes
                 Position = new Point(7, 3),
             };
             txtBoxChrName.Resize(12, 1);
-            txtBoxChrName.Text = PlayerNameData;
             Controls.Add(txtBoxChrName);
 
             //The TextBox and the Text for the "Name" that is displayed on the screen
@@ -34,8 +35,11 @@ namespace Project_Gurasic.Scenes
                 Position = new Point(11, 5),
             };
             txtBoxChrName.Resize(14, 1);
-            txtBoxChrNickName.Text = PlayerNicknameData;
             Controls.Add(txtBoxChrNickName);
+            string PlayerNickName = File.ReadLines("PlayerInfo.txt").Skip(7).Take(1).First();
+            txtBoxChrNickName.Text = PlayerNickName;
+            string PlayerName = File.ReadLines("PlayerInfo.txt").Skip(4).Take(1).First();
+            txtBoxChrName.Text = PlayerName;
 
             //Finish Button
             var finishbutton = new SelectionButton(8, 1)
@@ -187,13 +191,8 @@ namespace Project_Gurasic.Scenes
             // ----- Saving Data to a .txt file -----
 
             String playerGender = null;
-
-            // Checks the geneder button that is pressed and uptades playerGender String acordingly
-            selFemaleButton.Click += (s, e) => { playerGender = "Female"; };
-            selMaleButton.Click += (s, e) => { playerGender = "Male"; };
-            finishbutton.Click += (s, e) =>
+            void SavingPlayerInfo() 
             {
-
                 using (StreamWriter writer = new StreamWriter("PlayerInfo.txt"))
                 {
                     writer.WriteLine("- - - Player Info - - -");
@@ -239,29 +238,25 @@ namespace Project_Gurasic.Scenes
                     writer.Close();
                     writer.Dispose();
                 }
-
-                PlayerNameData = " ";
-                PlayerNicknameData = " ";
-                using (StreamWriter writer = new StreamWriter("SavedInfo.txt"))
-                {
-                    writer.WriteLine(" ");
-                    writer.WriteLine(" ");
-                    writer.Close();
-                    writer.Dispose();
-                }
-
+            }
+            // Checks the geneder button that is pressed and uptades playerGender String acordingly
+            selFemaleButton.Click += (s, e) => { playerGender = "Female"; };
+            selMaleButton.Click += (s, e) => { playerGender = "Male"; };
+            finishbutton.Click += (s, e) =>
+            {
+                SavingPlayerInfo();
                 Game.Instance.Screen = new PlayerHouse();
                 Game.Instance.DestroyDefaultStartingConsole();
             };
 
             buttonTraits.Click += (s, e) =>
             {
+                SavingPlayerInfo();
                 Game.Instance.Screen = new TraitSelection();
                 Game.Instance.DestroyDefaultStartingConsole();
-                PlayerNameData = txtBoxChrName.Text;
-                PlayerNicknameData = txtBoxChrNickName.Text;
+
             };
-  
+         
         }
     }
     internal class TraitSelection : SadConsole.UI.ControlsConsole
@@ -521,6 +516,8 @@ namespace Project_Gurasic.Scenes
             {
                 Game.Instance.Screen = new CharacterChreation();
                 Game.Instance.DestroyDefaultStartingConsole();
+                CharacterChreation.PlayerNameDatabool = true;
+                CharacterChreation.PlayerNicknameDatabool = true;
             };
 
             // The method that displays the traits the player choose in a line
