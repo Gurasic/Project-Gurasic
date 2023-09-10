@@ -1,17 +1,21 @@
 ﻿using Project_Gurasic.Scenes;
 using SadConsole;
+using SadConsole.Ansi;
 using SadConsole.UI;
 using SadConsole.UI.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Project_Gurasic
 {
+   
     internal class BaseGameplayGUI : SadConsole.UI.ControlsConsole
     {
+       
         public string Title => "CharacterChreation";
         public static int PlayerTimeLeft = 1;
         public static int PlayerTimeRight = 1;
@@ -350,10 +354,58 @@ namespace Project_Gurasic
             };
         }
     }
+    class SkillInfo
+    {
+        public string Name { get; set; }
+        public int Level { get; set; }
+        public int CurrentExp { get; set; }
+        public int TargetExp { get; set; }
+        public ProgressBar ProgressBar { get; set; }
+    }
     internal class PlayerSkills : SadConsole.UI.ControlsConsole
     {
+        private Dictionary<string, SkillInfo> _skillCache = new Dictionary<string, SkillInfo>(StringComparer.OrdinalIgnoreCase);
+
         String[] PlayerSkillsArray = new String[10];
         public static ProgressBar Test;
+        public void SetSkill(string name, int level, int currentExp, int targetExp, int separation)
+        {
+            int startx = 4;
+            int starty = 5;
+
+            // If skill does not yet exist, add it
+            if (!_skillCache.TryGetValue(name, out SkillInfo skillInfo))
+            {
+                skillInfo = new SkillInfo { Name = name };
+                _skillCache.Add(name, skillInfo);
+
+                // Add progress bar when its a new skill
+                int startxBar = 4;
+                foreach (var pair in _skillCache)
+                {
+                    var key = pair.Key;
+                    skillInfo.ProgressBar = new ProgressBar(10, 1, HorizontalAlignment.Left) { Position = new Point(startxBar, starty + 1) };
+                    Controls.Add(skillInfo.ProgressBar);
+                    startxBar += 16;
+                }
+
+            }
+            
+            // Set properties
+            skillInfo.Level = level;
+            skillInfo.CurrentExp = currentExp;
+            skillInfo.TargetExp = targetExp;
+
+            // Update rendering
+
+            foreach (var pair in _skillCache)
+            {
+                var key = pair.Key;
+                this.Print(startx, starty, key, Color.White);
+                this.Print(startx + separation + 1, starty, "Lv: " + skillInfo.Level, Color.AnsiWhite);
+                startx += 16;
+            }
+        }
         public PlayerSkills() : base(160, 160) 
         {
 
@@ -370,37 +422,17 @@ namespace Project_Gurasic
                 ShowEnds = false
 
             };
-            Test = new ProgressBar(10,1, HorizontalAlignment.Left) { Position = new Point(4,6) };
-            Test.DisplayText = " ";
-            Test.DetermineState();
-            Controls.Add(Test);
             Controls.Add(ReturnButton);
-            PlayerSkillsArray[0] = "Test";
-            Test.Progress = 1;
-            Skill(10, 6);
+
+            SetSkill("Test", 2, 0, 10, 4);
+            SetSkill("Test2", 5, 0, 10, 5);
 
             // Player Info Logic
             ReturnButton.Click += (s, e) =>
             {
                 Game.Instance.Screen = GameSettings.LastScreen;
                 Game.Instance.DestroyDefaultStartingConsole();
-            };
-
-            void Skill(int Level, int Spearation) 
-            {
-               int startx = 4;
-               for (int i = 0; i < 10; i++)
-               {
-                    if (PlayerSkillsArray[i] != null)
-                    {
-                        this.Print(startx, 5, PlayerSkillsArray[i], Color.White);
-                        this.Print(startx + Spearation + 1, 5, "Lv: " + Convert.ToString(Level), Color.AnsiWhite);
-                    }
-                    else { this.Print(startx, 5, "", Color.LightSlateGray); }
-                    startx += 16;
-               }
-               
-            }    
+            };   
             
         }
 
