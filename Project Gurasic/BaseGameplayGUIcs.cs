@@ -1,4 +1,5 @@
 ﻿using Project_Gurasic.Scenes;
+using SadConsole;
 using SadConsole.UI;
 using SadConsole.UI.Controls;
 using System;
@@ -55,6 +56,26 @@ namespace Project_Gurasic
             PlayerInventoryButton.Click += (s, e) =>
             {
                 Game.Instance.Screen = new PlayerInventory();
+                Game.Instance.DestroyDefaultStartingConsole();
+            };
+
+            // Skills Box
+            Surface.DrawBox(new Rectangle(36, 27, 14, 3), ShapeParameters.CreateBorder(new ColoredGlyph(Color.AnsiBlueBright, Color.Black, '#')));
+
+            // Skills Button 
+            var PlayerSkillsButton = new SelectionButton(11, 1)
+            {
+                Text = "[Skills]",
+                Position = new Point(37, 28),
+                ShowEnds = false
+
+            };
+            Controls.Add(PlayerSkillsButton);
+
+            // Inventory Logic
+            PlayerSkillsButton.Click += (s, e) =>
+            {
+                Game.Instance.Screen = new PlayerSkills();
                 Game.Instance.DestroyDefaultStartingConsole();
             };
         }
@@ -154,10 +175,11 @@ namespace Project_Gurasic
         public int Quantity { get; set; }
     }
 
-    internal class PlayerInventory : SadConsole.UI.ControlsConsole 
+    internal class PlayerInventory : SadConsole.UI.ControlsConsole
     {
-        public static int InventorySpace = 50;
-        InventoryItem[] inventory = new InventoryItem[InventorySpace];
+        public static int InventorySize = 10;
+        public static int InventorySpacing = 2;
+        InventoryItem[] inventory = new InventoryItem[InventorySize];
 
         // This is were the magic happens
 
@@ -204,41 +226,36 @@ namespace Project_Gurasic
                     }
                     return; 
                 }
-            } //$"{inventory[i].Name} [{inventory[i].Quantity}]"
+            } 
         }
         public void DisplayInventory(int rows)
         {
-            int startX = 7; 
-            int startY = 6; 
+            int startX = 6; 
+            int startY = 5; 
             int itemsPerRow = 5; 
 
             for (int i = 0; i < inventory.Length; i++)
             {
                 if (inventory[i] != null)
                 {
-                    // Print the symbol for the item at the specified coordinates
                     this.Print(startX, startY, $"{inventory[i].Name} [{inventory[i].Quantity}]", Color.Gray);
                 }
                 else
                 {
-                    // If the slot is empty, print a space
                     this.Print(startX, startY, " ", Color.Gray);
                 }
 
-                // Move to the next column
-                startX += 16; // Adjust this value for the desired spacing
+                startX += 16; 
 
-                // Check if it's time to move to the next row
                 if ((i + 1) % itemsPerRow == 0)
                 {
-                    startX = 7; // Reset the X-coordinate for the next row
-                    startY += 2; // Adjust this value for the desired vertical spacing
+                    startX = 6; 
+                    startY += 2; 
                 }
 
-                // Check if it's time to move to the next section (new row)
                 if ((i + 1) % (itemsPerRow * rows) == 0)
                 {
-                    startY += 2; // Add extra vertical spacing for new sections
+                    startY += 2; 
                 }
             }
         }
@@ -248,13 +265,11 @@ namespace Project_Gurasic
             Surface.DrawBox(new Rectangle(1, 1, 88, 28), ShapeParameters.CreateBorder(new ColoredGlyph(Color.AnsiBlueBright, Color.Black, '#')));
 
             this.Print(4, 3, "Inventory: ", Color.LightSlateGray);
-            this.Print(68, 3, "Inventory size: " + InventorySpace, Color.LightSlateGray);
+            this.Print(68, 3, "Inventory size: " + InventorySize, Color.LightSlateGray);
+   
+            DisplayInventory(InventorySpacing);
 
-            for (int i = 1; i < 51; i++) { AddItem("item" + i, 1); }
-
-            DisplayInventory(10);
-
-            // Return Button*
+            // Return Button
             var ReturnButton = new SelectionButton(11, 1)
             {
                 Text = "[Return]",
@@ -271,8 +286,60 @@ namespace Project_Gurasic
                 Game.Instance.DestroyDefaultStartingConsole();
             };
         }
+    }
+    internal class PlayerSkills : SadConsole.UI.ControlsConsole
+    {
+        String[] PlayerSkillsArray = new String[10];
+        public static ProgressBar Test;
+        public PlayerSkills() : base(160, 160) 
+        {
 
+            // The Mighty Box
+            Surface.DrawBox(new Rectangle(1, 1, 88, 28), ShapeParameters.CreateBorder(new ColoredGlyph(Color.AnsiBlueBright, Color.Black, '#')));
+
+            this.Print(4, 3, "Player Skills: ", Color.LightSlateGray);
+
+            // Return Button
+            var ReturnButton = new SelectionButton(11, 1)
+            {
+                Text = "[Return]",
+                Position = new Point(2, 26),
+                ShowEnds = false
+
+            };
+            Test = new ProgressBar(10,1, HorizontalAlignment.Left) { Position = new Point(4,6) };
+            Test.DisplayText = " ";
+            Test.DetermineState();
+            Controls.Add(Test);
+            Controls.Add(ReturnButton);
+            PlayerSkillsArray[0] = "get real";
+            Test.Progress = 1;
+            Skill(10, 8);
+
+            // Player Info Logic
+            ReturnButton.Click += (s, e) =>
+            {
+                Game.Instance.Screen = GameSettings.LastScreen;
+                Game.Instance.DestroyDefaultStartingConsole();
+            };
+
+            void Skill(int Level, int Spearation) 
+            {
+               int startx = 4;
+               for (int i = 0; i < 10; i++)
+               {
+                    if (PlayerSkillsArray[i] != null)
+                    {
+                        this.Print(startx, 5, PlayerSkillsArray[i], Color.White);
+                        this.Print(startx + Spearation + 1, 5, "Lv: " + Convert.ToString(Level), Color.AnsiWhite);
+                    }
+                    else { this.Print(startx, 5, "", Color.LightSlateGray); }
+                    startx += 16;
+               }
+               
+            }    
+            
+        }
 
     }
-
 }
