@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SadCanvas;
+using SadConsole.Input;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -15,6 +17,5 @@ namespace Project_Gurasic
             this.Print(1, 13, "It Works ", Color.Red);
 
         }
-
     }
 }

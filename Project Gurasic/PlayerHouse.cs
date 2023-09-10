@@ -1,4 +1,5 @@
-﻿using SadConsole.Debug;
+﻿using SadCanvas;
+using SadConsole.Debug;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,8 +14,12 @@ namespace Project_Gurasic
         public PlayerHouse()
         {
             GameSettings.LastScreen = this;
-            
 
+            _ = new Canvas("res/images/chiken.png")
+            {
+                Parent = this,
+                Position = new Point(10, 10),
+            };
 
         }
 

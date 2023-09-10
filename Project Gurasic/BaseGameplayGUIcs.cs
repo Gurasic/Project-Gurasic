@@ -13,7 +13,10 @@ namespace Project_Gurasic
     internal class BaseGameplayGUI : SadConsole.UI.ControlsConsole
     {
         public string Title => "CharacterChreation";
-        public static int PlayerTime = 700;
+        public static int PlayerTimeLeft = 1;
+        public static int PlayerTimeRight = 1;
+        public static int PlayerDay = 1;
+        public static String PlayerSeason = "[Spring]";
 
         public BaseGameplayGUI() : base(160, 160)
         {
@@ -78,6 +81,66 @@ namespace Project_Gurasic
                 Game.Instance.Screen = new PlayerSkills();
                 Game.Instance.DestroyDefaultStartingConsole();
             };
+
+            // Season Box
+            Surface.DrawBox(new Rectangle(76, 0, 14, 3), ShapeParameters.CreateBorder(new ColoredGlyph(Color.AnsiBlueBright, Color.Black, '#')));
+
+            // Season Logic
+            if (PlayerDay == 31 && PlayerSeason == "[Spring]")
+            {
+                PlayerSeason = "[Summer]";
+                PlayerDay = 1;
+            }
+            else if (PlayerDay == 31 && PlayerSeason == "[Summer]")
+            {
+                PlayerSeason = "[Fall]";
+                PlayerDay = 1;
+            }
+            else if (PlayerDay == 31 && PlayerSeason == "[Fall]")
+            {
+                PlayerSeason = "[Winter]";
+                PlayerDay = 1;
+            }
+            else if (PlayerDay == 31 && PlayerSeason == "[Winter]")
+            {
+                PlayerSeason = "[Spring]";
+                PlayerDay = 1;
+            }
+
+            // Displaying Seasons Logic
+            if (PlayerSeason == "[Spring]")
+            {
+                this.Print(79, 1, PlayerSeason, Color.LightPink);
+            }
+            else if (PlayerSeason == "[Summer]")
+            {
+                this.Print(79, 1, PlayerSeason, Color.LightGoldenrodYellow);
+            }
+            else if (PlayerSeason == "[Fall]")
+            {
+                this.Print(80, 1, PlayerSeason, Color.AnsiYellow);
+            }
+            else if (PlayerSeason == "[Winter]")
+            {
+                this.Print(79, 1, PlayerSeason, Color.LightSteelBlue);
+            }
+
+            // Day Box
+            Surface.DrawBox(new Rectangle(66, 0, 11, 3), ShapeParameters.CreateBorder(new ColoredGlyph(Color.AnsiBlueBright, Color.Black, '#')));
+            this.Print(68, 1, "Day: " + PlayerDay, Color.LightSteelBlue);
+
+            // Time box
+            Surface.DrawBox(new Rectangle(79, 2, 11, 3), ShapeParameters.CreateBorder(new ColoredGlyph(Color.AnsiBlueBright, Color.Black, '#')));
+
+            // Time Logic
+            String empty0 = "0";
+            String empty02 = "0";
+            if (PlayerTimeRight == 60) { PlayerTimeLeft++; PlayerTimeRight = 0; }
+            if (PlayerTimeLeft == 24) { PlayerDay++; PlayerTimeLeft = 1; }
+            if (PlayerTimeRight == 10) { empty02 = ""; }
+            if (PlayerTimeLeft == 10) { empty0 = ""; }
+
+            this.Print(82,3, empty0 + PlayerTimeLeft + ":" + empty02 + PlayerTimeRight, Color.LightSteelBlue);
         }
     }
     internal class PlayerInfo : SadConsole.UI.ControlsConsole
@@ -312,9 +375,9 @@ namespace Project_Gurasic
             Test.DetermineState();
             Controls.Add(Test);
             Controls.Add(ReturnButton);
-            PlayerSkillsArray[0] = "get real";
+            PlayerSkillsArray[0] = "Test";
             Test.Progress = 1;
-            Skill(10, 8);
+            Skill(10, 6);
 
             // Player Info Logic
             ReturnButton.Click += (s, e) =>
