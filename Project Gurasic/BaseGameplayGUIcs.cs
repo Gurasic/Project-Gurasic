@@ -1,4 +1,5 @@
-﻿using Project_Gurasic.Scenes;
+﻿using Newtonsoft.Json.Linq;
+using Project_Gurasic.Scenes;
 using SadConsole;
 using SadConsole.Ansi;
 using SadConsole.UI;
@@ -9,6 +10,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Markup;
 
 namespace Project_Gurasic
 {
@@ -357,6 +359,7 @@ namespace Project_Gurasic
     class SkillInfo
     {
         public string Name { get; set; }
+        public int Sequence { get; set; }
         public int Level { get; set; }
         public int CurrentExp { get; set; }
         public int TargetExp { get; set; }
@@ -367,44 +370,63 @@ namespace Project_Gurasic
         private Dictionary<string, SkillInfo> _skillCache = new Dictionary<string, SkillInfo>(StringComparer.OrdinalIgnoreCase);
 
         String[] PlayerSkillsArray = new String[10];
-        public static ProgressBar Test;
+
         public void SetSkill(string name, int level, int currentExp, int targetExp, int separation)
         {
-            int startx = 4;
-            int starty = 5;
-
+            int startx = 4, starty = 5;
+            float progressBar = Math.Min(currentExp, targetExp) / (float)targetExp;
             // If skill does not yet exist, add it
             if (!_skillCache.TryGetValue(name, out SkillInfo skillInfo))
             {
-                skillInfo = new SkillInfo { Name = name };
+                var highestSeq = _skillCache.Count > 0 ? _skillCache.Values.Max(x => x.Sequence) : -1;
+                highestSeq++;
+
+                skillInfo = new SkillInfo { Name = name, Sequence = highestSeq };
                 _skillCache.Add(name, skillInfo);
 
                 // Add progress bar when its a new skill
                 int startxBar = 4;
-                foreach (var pair in _skillCache)
-                {
-                    var key = pair.Key;
-                    skillInfo.ProgressBar = new ProgressBar(10, 1, HorizontalAlignment.Left) { Position = new Point(startxBar, starty + 1) };
-                    Controls.Add(skillInfo.ProgressBar);
-                    startxBar += 16;
-                }
-
+                startxBar += 20 * skillInfo.Sequence;
+                skillInfo.ProgressBar = new ProgressBar(16, 1, HorizontalAlignment.Left) { Position = new Point(startxBar, starty + 1) };
+                skillInfo.ProgressBar.BackgroundGlyph = '=';
+                skillInfo.ProgressBar.DisplayText = "";
+                skillInfo.ProgressBar.Progress = progressBar;
+                Controls.Add(skillInfo.ProgressBar);
             }
-            
+
             // Set properties
             skillInfo.Level = level;
             skillInfo.CurrentExp = currentExp;
             skillInfo.TargetExp = targetExp;
 
-            // Update rendering
-
-            foreach (var pair in _skillCache)
+            if (currentExp >= targetExp)
             {
-                var key = pair.Key;
-                this.Print(startx, starty, key, Color.White);
-                this.Print(startx + separation + 1, starty, "Lv: " + skillInfo.Level, Color.AnsiWhite);
-                startx += 16;
+                skillInfo.CurrentExp = 0; skillInfo.Level++;
+                skillInfo.ProgressBar.Progress = 0;
+                skillInfo.TargetExp = Convert.ToInt32(CalculateRequiredExpForLevel(skillInfo.Level));
             }
+
+            // Update rendering
+            startx += 20 * skillInfo.Sequence;
+            this.Print(startx, starty, "                ", Color.White);
+            this.Print(startx, starty, skillInfo.Name, Color.White);
+            this.Print(startx + separation + 6, starty, "Lv: " + skillInfo.Level, Color.AnsiWhite);
+
+            // Set properties
+            skillInfo.Level = level;
+            skillInfo.CurrentExp = currentExp;
+            skillInfo.TargetExp = targetExp;
+            skillInfo.Level++;
+        }
+
+        private double baseExp = 20; 
+        private double initialMultiplier = 0.5; 
+        private double increment = 0.3; 
+
+        public double CalculateRequiredExpForLevel(int level)
+        {
+            double expMultiplier = initialMultiplier + (level - 1) * increment;
+            return baseExp * Math.Pow(expMultiplier, level - 1);
         }
         public PlayerSkills() : base(160, 160) 
         {
@@ -424,8 +446,10 @@ namespace Project_Gurasic
             };
             Controls.Add(ReturnButton);
 
-            SetSkill("Test", 2, 0, 10, 4);
-            SetSkill("Test2", 5, 0, 10, 5);
+            SetSkill("Test", 1, 21, 20, 4);
+            SetSkill("Test2", 1, 0, 20, 5);
+            SetSkill("Test3", 1, 0, 20, 5);
+
 
             // Player Info Logic
             ReturnButton.Click += (s, e) =>
