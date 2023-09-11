@@ -45,7 +45,6 @@ namespace Project_Gurasic
             PlayerInfoButton.Click += (s, e) =>
             {
                 Game.Instance.Screen = new PlayerInfo();
-                Game.Instance.DestroyDefaultStartingConsole();
             };
 
             // Inventory Box
@@ -65,7 +64,6 @@ namespace Project_Gurasic
             PlayerInventoryButton.Click += (s, e) =>
             {
                 Game.Instance.Screen = new PlayerInventory();
-                Game.Instance.DestroyDefaultStartingConsole();
             };
 
             // Skills Box
@@ -85,7 +83,6 @@ namespace Project_Gurasic
             PlayerSkillsButton.Click += (s, e) =>
             {
                 Game.Instance.Screen = new PlayerSkills();
-                Game.Instance.DestroyDefaultStartingConsole();
             };
 
             // Season Box
@@ -234,7 +231,6 @@ namespace Project_Gurasic
             ReturnButton.Click += (s, e) =>
             {
                 Game.Instance.Screen = GameSettings.LastScreen;
-                Game.Instance.DestroyDefaultStartingConsole();
             };
         }
     }
@@ -352,7 +348,6 @@ namespace Project_Gurasic
             ReturnButton.Click += (s, e) =>
             {
                 Game.Instance.Screen = GameSettings.LastScreen;
-                Game.Instance.DestroyDefaultStartingConsole();
             };
         }
     }
@@ -386,8 +381,8 @@ namespace Project_Gurasic
 
                 // Add progress bar when its a new skill
                 int startxBar = 4;
-                startxBar += 20 * skillInfo.Sequence;
-                skillInfo.ProgressBar = new ProgressBar(16, 1, HorizontalAlignment.Left) { Position = new Point(startxBar, starty + 1) };
+                startx += 20 * skillInfo.Sequence;
+                skillInfo.ProgressBar = new ProgressBar(16, 1, HorizontalAlignment.Left) { Position = new Point(startx, starty + 1) };
                 skillInfo.ProgressBar.BackgroundGlyph = '=';
                 skillInfo.ProgressBar.DisplayText = "";
                 skillInfo.ProgressBar.Progress = progressBar;
@@ -398,7 +393,7 @@ namespace Project_Gurasic
             skillInfo.Level = level;
             skillInfo.CurrentExp = currentExp;
             skillInfo.TargetExp = targetExp;
-
+            skillInfo.TargetExp = Convert.ToInt32(CalculateRequiredExpForLevel(skillInfo.Level));
             if (currentExp >= targetExp)
             {
                 skillInfo.CurrentExp = 0; skillInfo.Level++;
@@ -407,16 +402,10 @@ namespace Project_Gurasic
             }
 
             // Update rendering
-            startx += 20 * skillInfo.Sequence;
+
             this.Print(startx, starty, "                ", Color.White);
             this.Print(startx, starty, skillInfo.Name, Color.White);
             this.Print(startx + separation + 6, starty, "Lv: " + skillInfo.Level, Color.AnsiWhite);
-
-            // Set properties
-            skillInfo.Level = level;
-            skillInfo.CurrentExp = currentExp;
-            skillInfo.TargetExp = targetExp;
-            skillInfo.Level++;
         }
 
         private double baseExp = 20; 
@@ -455,7 +444,6 @@ namespace Project_Gurasic
             ReturnButton.Click += (s, e) =>
             {
                 Game.Instance.Screen = GameSettings.LastScreen;
-                Game.Instance.DestroyDefaultStartingConsole();
             };   
             
         }

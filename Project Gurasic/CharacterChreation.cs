@@ -1,5 +1,7 @@
 ﻿using SadConsole.Input;
+using SadConsole.UI;
 using SadConsole.UI.Controls;
+using System.IO;
 using System.Text.Json;
 namespace Project_Gurasic.Scenes
 {
@@ -15,7 +17,7 @@ namespace Project_Gurasic.Scenes
         public CharacterChreation() : base(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
         {
             var colors = Controls.GetThemeColors();
-            
+
 
             //Prints the "Character Creation" Text on top of the screen
             this.Print(1, 1, "Character Creation: ", colors.Yellow);
@@ -37,10 +39,6 @@ namespace Project_Gurasic.Scenes
             };
             txtBoxChrName.Resize(14, 1);
             Controls.Add(txtBoxChrNickName);
-            string PlayerNickName = File.ReadLines("PlayerInfo.txt").Skip(7).Take(1).First();
-            txtBoxChrNickName.Text = PlayerNickName;
-            string PlayerName = File.ReadLines("PlayerInfo.txt").Skip(4).Take(1).First();
-            txtBoxChrName.Text = PlayerName;
 
             //Finish Button
             var finishbutton = new SelectionButton(8, 1)
@@ -263,17 +261,29 @@ namespace Project_Gurasic.Scenes
             {
                 SavingPlayerInfo();
                 Game.Instance.Screen = new PlayerHouse();
-                Game.Instance.DestroyDefaultStartingConsole();
             };
 
             buttonTraits.Click += (s, e) =>
             {
                 SavingPlayerInfo();
                 Game.Instance.Screen = new TraitSelection();
-                Game.Instance.DestroyDefaultStartingConsole();
 
             };
-         
+            if (!File.Exists("PlayerInfo.txt"))
+            {
+                File.Create("PlayerInfo.txt").Dispose();
+                SavingPlayerInfo();
+            } 
+            else 
+            { 
+                SavingPlayerInfo(); 
+            }
+
+
+            string PlayerNickName = File.ReadLines("PlayerInfo.txt").Skip(7).Take(1).First();
+            txtBoxChrNickName.Text = PlayerNickName;
+            string PlayerName = File.ReadLines("PlayerInfo.txt").Skip(4).Take(1).First();
+            txtBoxChrName.Text = PlayerName;
         }
     }
     internal class TraitSelection : SadConsole.UI.ControlsConsole
@@ -532,7 +542,6 @@ namespace Project_Gurasic.Scenes
             finishbutton.Click += (s, e) =>
             {
                 Game.Instance.Screen = new CharacterChreation();
-                Game.Instance.DestroyDefaultStartingConsole();
                 CharacterChreation.PlayerNameDatabool = true;
                 CharacterChreation.PlayerNicknameDatabool = true;
             };
