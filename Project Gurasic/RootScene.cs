@@ -1,4 +1,5 @@
-﻿using SadConsole.UI.Controls;
+﻿using SadConsole.Entities;
+using SadConsole.UI.Controls;
 
 namespace Project_Gurasic.Scenes
 {
@@ -42,6 +43,31 @@ namespace Project_Gurasic.Scenes
         }
 
     }
+    internal class RootScene2 : AnimatedScreenObject
+    {
+        public string Title => "RootScene";
 
+        public RootScene2() : base("real",GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
+        {
+            var animation = AnimatedScreenObject.FromImage(
+            name: "Clumsy Skater",
+            filePath: "res/images/afbeelding-11.png",
+            frameLayout: new Point(6, 3), // Each frame is 6x3
+            frameDuration: TimeSpan.FromSeconds(2),
 
+            pixelPadding: new Point(1, 1), // With 1,1 padding between each frame
+            frameStartAndFinish: new Point(0, 15), //x first frae, y last frame
+            font: Game.Instance.DefaultFont);
+
+            // Add the animation as a child to the console, the console will handle the rendering
+            Children.Add(animation);
+            // Position the animation in the parent console
+            animation.Position = new Point(2, 2);
+            // Make sure it repeats
+            animation.Repeat = true;
+            //Start playing the animation
+            animation.Start();
+            Children.Add(animation);
+        }
+    }
 }

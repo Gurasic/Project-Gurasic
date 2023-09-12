@@ -1,16 +1,7 @@
-﻿using Newtonsoft.Json.Linq;
+﻿
 using Project_Gurasic.Scenes;
-using SadConsole;
-using SadConsole.Ansi;
-using SadConsole.UI;
 using SadConsole.UI.Controls;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Emit;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Markup;
+
 
 namespace Project_Gurasic
 {
@@ -23,6 +14,7 @@ namespace Project_Gurasic
         public static int PlayerTimeRight = 1;
         public static int PlayerDay = 1;
         public static String PlayerSeason = "[Spring]";
+        public static int PlayerWeather = 1;
 
         public BaseGameplayGUI() : base(160, 160)
         {
@@ -129,8 +121,16 @@ namespace Project_Gurasic
             }
 
             // Day Box
+            Surface.DrawBox(new Rectangle(69, 2, 11, 3), ShapeParameters.CreateBorder(new ColoredGlyph(Color.AnsiBlueBright, Color.Black, '#')));
+            this.Print(71, 3, "Day: " + PlayerDay, Color.LightSteelBlue);
+
+            // Day Box
+
+            if (PlayerWeather == 1) { this.Print(68, 1, "[Sunny]", Color.AnsiYellowBright); }
+            if (PlayerWeather == 2) { this.Print(68, 1, "[Cludy]", Color.DarkGray); }
+            if (PlayerWeather == 3) { this.Print(68, 1, "[Rainy]", Color.CornflowerBlue); }
             Surface.DrawBox(new Rectangle(66, 0, 11, 3), ShapeParameters.CreateBorder(new ColoredGlyph(Color.AnsiBlueBright, Color.Black, '#')));
-            this.Print(68, 1, "Day: " + PlayerDay, Color.LightSteelBlue);
+
 
             // Time box
             Surface.DrawBox(new Rectangle(79, 2, 11, 3), ShapeParameters.CreateBorder(new ColoredGlyph(Color.AnsiBlueBright, Color.Black, '#')));
@@ -366,7 +366,7 @@ namespace Project_Gurasic
 
         String[] PlayerSkillsArray = new String[10];
 
-        public void SetSkill(string name, int level, int currentExp, int targetExp, int separation)
+        public void SetSkill(string name, int level, int currentExp, int targetExp)
         {
             int startx = 4, starty = 5;
             float progressBar = Math.Min(currentExp, targetExp) / (float)targetExp;
@@ -405,7 +405,8 @@ namespace Project_Gurasic
 
             this.Print(startx, starty, "                ", Color.White);
             this.Print(startx, starty, skillInfo.Name, Color.White);
-            this.Print(startx + separation + 6, starty, "Lv: " + skillInfo.Level, Color.AnsiWhite);
+            var levelText = "Lv: " + skillInfo.Level;
+            this.Print(startx + skillInfo.ProgressBar.Width - levelText.Length, starty, levelText, Color.AnsiWhite);
         }
 
         private double baseExp = 20; 
@@ -435,9 +436,9 @@ namespace Project_Gurasic
             };
             Controls.Add(ReturnButton);
 
-            SetSkill("Test", 1, 21, 20, 4);
-            SetSkill("Test2", 1, 0, 20, 5);
-            SetSkill("Test3", 1, 0, 20, 5);
+            SetSkill("Test", 1, 21, 20);
+            SetSkill("Test2", 1, 0, 20);
+            SetSkill("Test3", 1, 0, 20);
 
 
             // Player Info Logic
