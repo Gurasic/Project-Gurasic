@@ -1,4 +1,5 @@
-﻿using SadConsole.Entities;
+﻿using SadCanvas;
+using SadConsole.Entities;
 using SadConsole.UI.Controls;
 
 namespace Project_Gurasic.Scenes
@@ -9,7 +10,7 @@ namespace Project_Gurasic.Scenes
 
         public RootScene() : base(GameSettings.GAME_WIDTH, GameSettings.GAME_HEIGHT)
         {
-            
+
             var selButton = new SelectionButton(16, 1)
             {
                 Text = "Start",
@@ -39,7 +40,7 @@ namespace Project_Gurasic.Scenes
             this.Print(12, 13, "   \\ \\_______\\ \\__\\ \\__\\ \\__\\    \\ \\__\\ \\__\\ \\__\\\\ \\__\\ \\_______\\", colors.Yellow);
             this.Print(12, 14, "    \\|_______|\\|__|\\|__|\\|__|     \\|__|\\|__|\\|__| \\|__|\\|_______|", colors.Yellow);
             this.Print(36, 29, "Made by: Gurasic", colors.White);
-            
+
         }
 
     }

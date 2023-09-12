@@ -71,6 +71,20 @@ namespace Project_Gurasic
             };
             Controls.Add(PlayerSkillsButton);
 
+            // Move Box
+            Surface.DrawBox(new Rectangle(50, 27, 14, 3), ShapeParameters.CreateBorder(new ColoredGlyph(Color.SlateBlue, Color.Black, '#')));
+           
+            // Move Button 
+            var PlayerMoveButton = new SelectionButton(11, 1)
+            {
+                Text = "[Move]",
+                Position = new Point(51, 28),
+                ShowEnds = false
+
+            };
+            Controls.Add(PlayerMoveButton);
+
+
             // Inventory Logic
             PlayerSkillsButton.Click += (s, e) =>
             {
@@ -144,6 +158,26 @@ namespace Project_Gurasic
             if (PlayerTimeLeft == 10) { empty0 = ""; }
 
             this.Print(82,3, empty0 + PlayerTimeLeft + ":" + empty02 + PlayerTimeRight, Color.LightSteelBlue);
+        }
+        public void returnButton() 
+        {
+            // Return Box
+            Surface.DrawBox(new Rectangle(0, 1, 14, 3), ShapeParameters.CreateBorder(new ColoredGlyph(Color.SlateBlue, Color.Black, '#')));
+
+            // Return Button 
+            var PlayerReturnButton = new SelectionButton(11, 1)
+            {
+                Text = "[Return]",
+                Position = new Point(1, 2),
+                ShowEnds = false
+
+            };
+            Controls.Add(PlayerReturnButton);
+
+            PlayerReturnButton.Click += (s, e) =>
+            {
+                Game.Instance.Screen = GameSettings.LastScreen;
+            };
         }
     }
     internal class PlayerInfo : SadConsole.UI.ControlsConsole
